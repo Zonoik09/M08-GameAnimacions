@@ -1,34 +1,57 @@
 package com.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
+public class Main implements ApplicationListener {
     private SpriteBatch batch;
-    private Texture image;
+    private Player player;
+    private Joystick joystick;
+    private ShapeRenderer shapeRenderer;
+
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        player = new Player(batch);
+        joystick = new Joystick();
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        joystick.update();
+        player.update(joystick.getDirection());
+
+        player.draw();
+
+        // begin y end controlado aquí
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        joystick.draw(shapeRenderer);
+        shapeRenderer.end();
+    }
+
+
+    @Override
+    public void resize(int width, int height) {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        image.dispose();
+        player.dispose();
     }
 }
